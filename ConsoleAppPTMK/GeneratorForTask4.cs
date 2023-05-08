@@ -15,9 +15,8 @@ namespace ConsoleAppPTMK
             string lastName = lastNames[random.Next(lastNames.Length)];
             string surName = surNames[random.Next(surNames.Length)];
 
-            return $"{firstName} {lastName} {surName}";
+            return $"{lastName}  {firstName}  {surName}";
         }
-
         public static string GenerateGender(Random random)
         {
             string[] gender = { "Male", "Female" };

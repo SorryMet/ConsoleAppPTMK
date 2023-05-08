@@ -10,12 +10,10 @@ namespace ConsoleAppPTMK
 
         private static SqlConnection sqlConnection = null;
 
-
-
         static void AutoInsert1000000(string connectionString)
         {
             Random random = new Random();
-            for (int i = 1; i <= 100; i++)
+            for (int i = 1; i <= 1000000; i++)
             {
                 string fullName = GeneratorForTask4.GenerateFullName(random);
                 DateTime dateOfBirth = GeneratorForTask4.GenerateDateWithoutTime(random);
@@ -33,6 +31,32 @@ namespace ConsoleAppPTMK
             }
             Console.WriteLine("1000000 записей добавлены в таблицу PERSON");
         }
+        static void AutoInsert100(string connectionString)
+        {
+            Random random = new Random();
+            for (int i = 1; i <= 100; i++)
+            {
+                string fullName = GeneratorForTask4.GenerateFullName(random);
+                while (!fullName.StartsWith("F"))
+                {
+                    fullName = GeneratorForTask4.GenerateFullName(random);
+                }
+                DateTime dateOfBirth = GeneratorForTask4.GenerateDateWithoutTime(random);
+                string gender = "Male";
+
+                using (SqlCommand insert = new SqlCommand(
+                    "INSERT INTO PERSON (FullName, DateOfBirth, Gender) VALUES (@FullName, @DateOfBirth, @Gender)",
+                    sqlConnection))
+                {
+                    insert.Parameters.AddWithValue("@FullName", fullName);
+                    insert.Parameters.AddWithValue("@DateOfBirth", dateOfBirth);
+                    insert.Parameters.AddWithValue("@Gender", gender);
+                    insert.ExecuteNonQuery();
+                }
+            }
+            Console.WriteLine("100 записей добавлены в таблицу PERSON");
+        }
+
         static void SelectUnique(string connectionString)
         {
             //Не очень понел ,как именно надо вывести , потому что групировать ФИО+дата выдает ошибку
@@ -48,16 +72,15 @@ namespace ConsoleAppPTMK
                     {
                         string fullName = reader.GetString(0);
                         DateTime dateOfBirth = reader.GetDateTime(1).Date;
-                        string withoutTimeDate = dateOfBirth.ToString("dd.MM.yyyy");
+                        string DatewithoutTime = dateOfBirth.ToString("dd.MM.yyyy");
                         string gender = reader.GetString(2);
                         int age = reader.GetInt32(3);
 
-                        Console.WriteLine("{0} {1} {2} {3}", fullName, withoutTimeDate, gender, age);
+                        Console.WriteLine("{0} {1} {2} {3}", fullName, DatewithoutTime, gender, age);
                     }
                 }
                 Console.WriteLine("Вывод произведен");
             }
-
         }
         static void InsertData(string connectionString, string fullName, string date, string gender)
         {
@@ -108,7 +131,11 @@ namespace ConsoleAppPTMK
 
                 case "4":
                     AutoInsert1000000(connectionString);
+                    AutoInsert100(connectionString);
                     Console.ReadLine();
+                    break;
+
+                case "5":
                     break;
             }
         }
