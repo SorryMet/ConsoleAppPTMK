@@ -10,6 +10,29 @@ namespace ConsoleAppPTMK
 
         private static SqlConnection sqlConnection = null;
 
+        static void SelectAndTimer(string connectionString)
+        {
+            using (SqlCommand select = new SqlCommand(
+                "Select * from Person where Gender ='Male' AND  FullName Like 'F%'",
+                sqlConnection))
+            {
+                DateTime start = DateTime.Now;
+                using (SqlDataReader reader = select.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string fullName = reader.GetString(0);
+                        DateTime dateOfBirth = reader.GetDateTime(1).Date;
+                        string DatewithoutTime = dateOfBirth.ToString("dd.MM.yyyy");
+                        string gender = reader.GetString(2);
+
+                        Console.WriteLine("{0} {1} {2}", fullName, DatewithoutTime, gender);
+                    }
+                }
+                DateTime end = DateTime.Now;
+                Console.WriteLine("Вывод произведен.Время выполнения: {0} секунд.", (end - start).TotalSeconds);
+            }
+        }
         static void AutoInsert1000000(string connectionString)
         {
             Random random = new Random();
@@ -136,6 +159,8 @@ namespace ConsoleAppPTMK
                     break;
 
                 case "5":
+                    SelectAndTimer(connectionString);
+                    Console.ReadLine();
                     break;
             }
         }
