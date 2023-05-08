@@ -10,7 +10,7 @@ namespace ConsoleAppPTMK
 
         private static SqlConnection sqlConnection = null;
 
-        static void SelectAndBestTimer(string connectionString)
+        static void IndexForGender(string connectionString)
         {
             using (SqlCommand command = new SqlCommand("CREATE INDEX IndexGender ON Person (Gender)",
                 sqlConnection))
@@ -172,7 +172,7 @@ namespace ConsoleAppPTMK
                     break;
 
                 case "6":
-                    SelectAndBestTimer(connectionString);
+                   // IndexForGender(connectionString);
                     SelectAndTimer(connectionString);
                     Console.ReadLine();
                     break;
