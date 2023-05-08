@@ -10,10 +10,33 @@ namespace ConsoleAppPTMK
 
         private static SqlConnection sqlConnection = null;
 
+
+
+        static void AutoInsert1000000(string connectionString)
+        {
+            Random random = new Random();
+            for (int i = 1; i <= 100; i++)
+            {
+                string fullName = GeneratorForTask4.GenerateFullName(random);
+                DateTime dateOfBirth = GeneratorForTask4.GenerateDateWithoutTime(random);
+                string gender = GeneratorForTask4.GenerateGender(random);
+
+                using (SqlCommand insert = new SqlCommand(
+                    "INSERT INTO PERSON (FullName, DateOfBirth, Gender) VALUES (@FullName, @DateOfBirth, @Gender)",
+                    sqlConnection))
+                {
+                    insert.Parameters.AddWithValue("@FullName", fullName);
+                    insert.Parameters.AddWithValue("@DateOfBirth", dateOfBirth);
+                    insert.Parameters.AddWithValue("@Gender", gender);
+                    insert.ExecuteNonQuery();
+                }
+            }
+            Console.WriteLine("1000000 записей добавлены в таблицу PERSON");
+        }
         static void SelectUnique(string connectionString)
         {
-         //Не очень понел ,как именно надо вывести , потому что групировать ФИО+дата выдает ошибку
-         // Без групировки наверно можно было SELECT DISTINCT FullName, DateOfBirth, Gender, DATEDIFF(year, DateOfBirth, GETDATE()) AS Age FROM Person ORDER BY FullName;
+            //Не очень понел ,как именно надо вывести , потому что групировать ФИО+дата выдает ошибку
+            // Без групировки наверно можно было SELECT DISTINCT FullName, DateOfBirth, Gender, DATEDIFF(year, DateOfBirth, GETDATE()) AS Age FROM Person ORDER BY FullName;
             using (SqlCommand select = new SqlCommand(
                 "SELECT FullName, DateOfBirth, Gender, DATEDIFF(year, DateOfBirth, GETDATE()) AS Age " +
                 "FROM Person GROUP BY FullName, DateOfBirth, Gender ORDER BY FullName;",
@@ -25,11 +48,11 @@ namespace ConsoleAppPTMK
                     {
                         string fullName = reader.GetString(0);
                         DateTime dateOfBirth = reader.GetDateTime(1).Date;
-                        string formattedDate = dateOfBirth.ToString("dd.MM.yyyy");
+                        string withoutTimeDate = dateOfBirth.ToString("dd.MM.yyyy");
                         string gender = reader.GetString(2);
                         int age = reader.GetInt32(3);
 
-                        Console.WriteLine("{0} {1} {2} {3}", fullName, formattedDate, gender, age);
+                        Console.WriteLine("{0} {1} {2} {3}", fullName, withoutTimeDate, gender, age);
                     }
                 }
                 Console.WriteLine("Вывод произведен");
@@ -83,8 +106,10 @@ namespace ConsoleAppPTMK
                     Console.ReadLine();
                     break;
 
-                    case "4":
-                        break;
+                case "4":
+                    AutoInsert1000000(connectionString);
+                    Console.ReadLine();
+                    break;
             }
         }
     }
