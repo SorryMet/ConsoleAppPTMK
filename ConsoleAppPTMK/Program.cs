@@ -10,6 +10,14 @@ namespace ConsoleAppPTMK
 
         private static SqlConnection sqlConnection = null;
 
+        static void SelectAndBestTimer(string connectionString)
+        {
+            using (SqlCommand command = new SqlCommand("CREATE INDEX IndexGender ON Person (Gender)",
+                sqlConnection))
+            {
+                command.ExecuteNonQuery();
+            }
+        }
         static void SelectAndTimer(string connectionString)
         {
             using (SqlCommand select = new SqlCommand(
@@ -21,16 +29,16 @@ namespace ConsoleAppPTMK
                 {
                     while (reader.Read())
                     {
-                        string fullName = reader.GetString(0);
-                        DateTime dateOfBirth = reader.GetDateTime(1).Date;
+                        string fullName = reader.GetString(1);
+                        DateTime dateOfBirth = reader.GetDateTime(2).Date;
                         string DatewithoutTime = dateOfBirth.ToString("dd.MM.yyyy");
-                        string gender = reader.GetString(2);
+                        string gender = reader.GetString(3);
 
                         Console.WriteLine("{0} {1} {2}", fullName, DatewithoutTime, gender);
                     }
                 }
                 DateTime end = DateTime.Now;
-                Console.WriteLine("Вывод произведен.Время выполнения: {0} секунд.", (end - start).TotalSeconds);
+                Console.WriteLine("Вывод произведен.Время выполнения: {0} секунд.", (end - start).TotalMilliseconds);
             }
         }
         static void AutoInsert1000000(string connectionString)
@@ -159,6 +167,12 @@ namespace ConsoleAppPTMK
                     break;
 
                 case "5":
+                    SelectAndTimer(connectionString);
+                    Console.ReadLine();
+                    break;
+
+                case "6":
+                    SelectAndBestTimer(connectionString);
                     SelectAndTimer(connectionString);
                     Console.ReadLine();
                     break;
